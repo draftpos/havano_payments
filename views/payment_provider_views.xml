@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_provider_form_havano" model="ir.ui.view">
+        <field name="name">Havano Payments Provider Form</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+            <group name="provider_credentials" position='inside'>
+                <group invisible="code != 'havano_payments'">
+                    <field name="paynow_integration_id"
+                           required="code == 'havano_payments' and state != 'disabled'"/>
+                    <field name="paynow_integration_key"
+                           password="True"
+                           required="code == 'havano_payments' and state != 'disabled'"/>
+                </group>
+            </group>
+        </field>
+    </record>
+</odoo>

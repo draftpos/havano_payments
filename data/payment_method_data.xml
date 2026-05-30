@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_method_paynow" model="payment.method">
+        <field name="name">Paynow</field>
+        <field name="code">paynow</field>
+        <field name="sequence">10</field>
+        <field name="image" type="base64" file="havano_payments/static/description/icon.png"/>
+        <field name="support_tokenization">False</field>
+        <field name="support_express_checkout">False</field>
+    </record>
+
+    <record id="payment_method_ecocash" model="payment.method">
+        <field name="name">EcoCash</field>
+        <field name="code">ecocash</field>
+        <field name="sequence">20</field>
+        <field name="image" type="base64" file="havano_payments/static/description/ecocash.png"/>
+        <field name="support_tokenization">False</field>
+        <field name="support_express_checkout">False</field>
+    </record>
+</odoo>

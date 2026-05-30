@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Redirect Form for standard Paynow checkout -->
+    <template id="redirect_form">
+        <form t-att-action="api_url" method="get">
+            <!-- Redirects user using the browserurl via GET -->
+        </form>
+    </template>
+
+    <!-- Inline Form for EcoCash payment method -->
+    <template id="inline_form">
+        <div class="row pt-2 pb-3 px-3 rounded shadow-sm border bg-light">
+            <div class="col-12 mt-0 mb-0">
+                <label for="o_havano_payments_phone" class="form-label text-dark fw-semibold mb-1">
+                    EcoCash Mobile Wallet Number
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa fa-phone"/></span>
+                    <input type="tel"
+                           name="o_havano_payments_phone"
+                           id="o_havano_payments_phone"
+                           class="form-control border-start-0"
+                           placeholder="e.g. 0771111111"
+                           required="required"
+                           style="border-radius: 0 0.375rem 0.375rem 0;"/>
+                </div>
+                <small class="form-text text-muted d-block mt-2">
+                    Enter your EcoCash registered mobile number. A prompt will be sent to your phone to authorize this payment.
+                </small>
+            </div>
+        </div>
+    </template>
+</odoo>
