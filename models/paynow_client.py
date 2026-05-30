@@ -52,27 +52,18 @@ class PaynowClient:
             "status": "Message"
         }
 
-        # Sign the payload before encoding values
-        payload_to_hash = {}
-        for k, v in body.items():
-            payload_to_hash[k] = v
-
-        body_hash = self.generate_hash(payload_to_hash)
-
-        # Build final request payload
         # URL encode only values other than returnurl and resulturl
-        request_body = {}
         for k, v in body.items():
-            if k in ("returnurl", "resulturl"):
-                request_body[k] = v
-            else:
-                request_body[k] = quote_plus(str(v))
-        request_body["hash"] = body_hash
+            if k not in ("returnurl", "resulturl"):
+                body[k] = quote_plus(str(v))
 
-        _logger.info("Paynow initiation request body: %s", request_body)
+        # Sign the payload after encoding values (matching Paynow SDK logic)
+        body["hash"] = self.generate_hash(body)
+
+        _logger.info("Paynow initiation request body: %s", body)
 
         try:
-            res = requests.post(self.initiate_url, data=request_body, timeout=30)
+            res = requests.post(self.initiate_url, data=body, timeout=30)
             res.raise_for_status()
             
             # Response is urlencoded string
@@ -123,26 +114,18 @@ class PaynowClient:
             "status": "Message"
         }
 
-        # Sign the payload
-        payload_to_hash = {}
+        # URL encode only values other than returnurl, resulturl, and authemail (matching Paynow SDK logic)
         for k, v in body.items():
-            payload_to_hash[k] = v
+            if k not in ("returnurl", "resulturl", "authemail"):
+                body[k] = quote_plus(str(v))
 
-        body_hash = self.generate_hash(payload_to_hash)
+        # Sign the payload after encoding values
+        body["hash"] = self.generate_hash(body)
 
-        # Build final request payload
-        request_body = {}
-        for k, v in body.items():
-            if k in ("returnurl", "resulturl", "authemail"): # authemail is not encoded in mobile requests
-                request_body[k] = v
-            else:
-                request_body[k] = quote_plus(str(v))
-        request_body["hash"] = body_hash
-
-        _logger.info("Paynow mobile request body: %s", request_body)
+        _logger.info("Paynow mobile request body: %s", body)
 
         try:
-            res = requests.post(self.mobile_url, data=request_body, timeout=30)
+            res = requests.post(self.mobile_url, data=body, timeout=30)
             res.raise_for_status()
 
             response_data = dict(parse_qsl(res.text))
