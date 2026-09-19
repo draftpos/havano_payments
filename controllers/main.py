@@ -36,8 +36,12 @@ class HavanoPaymentsController(http.Controller):
     @http.route('/payment/havano_payments/webhook', type='http', auth='public', methods=['POST'], csrf=False)
     def havano_payments_webhook(self, **kwargs):
         """ Handles Paynow status update notification (webhook). """
-        _logger.info("Paynow webhook notification received with params: %s", kwargs)
-        reference = kwargs.get('reference')
+        # We must use httprequest.form to preserve Paynow's exact POST payload order for hash verification.
+        # kwargs mixes in GET params (like ?reference=...) which alters dictionary order and breaks the hash.
+        payload = dict(request.httprequest.form)
+        _logger.info("Paynow webhook notification received with payload: %s", payload)
+        
+        reference = payload.get('reference') or kwargs.get('reference')
         if not reference:
             return "Missing reference", 400
 
@@ -50,13 +54,13 @@ class HavanoPaymentsController(http.Controller):
             tx_sudo.provider_id.paynow_integration_key
         )
 
-        # Verify hash
-        if not client.verify_hash(kwargs):
+        # Verify hash using the exact POST payload
+        if not client.verify_hash(payload):
             _logger.warning("Paynow webhook signature verification failed for reference: %s", reference)
             return "Invalid signature", 400
 
-        # Process the update
-        tx_sudo._process('havano_payments', kwargs)
+        # Process the update with the verified payload
+        tx_sudo._process('havano_payments', payload)
         return "OK", 200
 
     @http.route('/payment/havano_payments/initiate_mobile', type='json', auth='public', methods=['POST'])
