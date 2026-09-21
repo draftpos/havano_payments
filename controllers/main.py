@@ -221,188 +221,162 @@ class HavanoPaymentsController(http.Controller):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authorize EcoCash Payment - Havano ERP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Authorize EcoCash Payment</title>
     <style>
         * {{
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }}
         body {{
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background-color: #f1f5f9;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            color: #f8fafc;
+            color: #0f172a;
         }}
         .card {{
-            background: rgba(30, 41, 59, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(16px);
-            border-radius: 24px;
-            padding: 40px;
-            max-width: 480px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 36px 32px;
+            max-width: 440px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(99, 102, 241, 0.15);
-            animation: fadeIn 0.4s ease-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
         }}
-        @keyframes fadeIn {{
-            from {{ opacity: 0; transform: translateY(16px); }}
-            to {{ opacity: 1; transform: translateY(0); }}
-        }}
-        .phone-pulse-container {{
-            position: relative;
-            width: 90px;
-            height: 90px;
-            margin: 0 auto 24px auto;
+        .spinner-container {{
             display: flex;
-            align-items: center;
             justify-content: center;
-        }}
-        .phone-circle {{
-            width: 76px;
-            height: 76px;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            border-radius: 50%;
-            display: flex;
             align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.5);
-            z-index: 2;
-            transition: all 0.3s ease;
+            min-height: 48px;
+            margin-bottom: 20px;
         }}
-        .phone-circle svg {{
-            width: 38px;
-            height: 38px;
-            fill: #ffffff;
-        }}
-        .pulse-ring {{
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 2px solid rgba(129, 140, 248, 0.6);
-            animation: pulse 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
-            z-index: 1;
-        }}
-        @keyframes pulse {{
-            0% {{ transform: scale(0.85); opacity: 0.8; }}
-            50% {{ transform: scale(1.3); opacity: 0.2; }}
-            100% {{ transform: scale(1.5); opacity: 0; }}
-        }}
-        h2 {{
-            font-size: 24px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 8px;
-            letter-spacing: -0.02em;
-        }}
-        .amount-tag {{
-            display: inline-block;
-            background: rgba(99, 102, 241, 0.15);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            color: #a5b4fc;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 18px;
-        }}
-        .instructions {{
-            font-size: 14px;
-            line-height: 1.6;
-            color: #94a3b8;
-            margin-bottom: 24px;
-        }}
-        .instructions strong {{
-            color: #e2e8f0;
-        }}
-        .status-box {{
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 14px;
-            padding: 14px 18px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-size: 14px;
-            color: #cbd5e1;
-            font-weight: 500;
-        }}
-        .spinner {{
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-top-color: #818cf8;
+        .main-spinner {{
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #0278F3;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }}
         @keyframes spin {{
             to {{ transform: rotate(360deg); }}
         }}
-        .btn {{
-            display: block;
-            width: 100%;
-            padding: 14px 20px;
-            border-radius: 12px;
-            font-size: 15px;
+        h2 {{
+            font-size: 18px;
             font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }}
+        .amount-tag {{
+            display: inline-block;
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            color: #0278F3;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }}
+        .instructions {{
+            font-size: 14px;
+            line-height: 1.5;
+            color: #475569;
+            margin-bottom: 20px;
+        }}
+        .instructions strong {{
+            color: #0f172a;
+        }}
+        .status-box {{
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 11px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+        }}
+        .status-spinner {{
+            width: 14px;
+            height: 14px;
+            border: 2px solid #cbd5e1;
+            border-top-color: #0278F3;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }}
+        .btn {{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
             text-decoration: none;
-            transition: all 0.2s ease;
-            border: none;
-            margin-bottom: 12px;
+            transition: all 0.15s ease;
+            box-sizing: border-box;
         }}
         .btn-primary {{
-            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            background-color: #0278F3;
+            border: 1px solid #0278F3;
             color: #ffffff;
-            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+            height: 38px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            margin-bottom: 8px;
         }}
         .btn-primary:hover {{
-            background: linear-gradient(135deg, #4338ca, #4f46e5);
-            transform: translateY(-1px);
+            background-color: #0260c4;
+            border-color: #0260c4;
+        }}
+        .btn-primary:disabled {{
+            background-color: #93c5fd;
+            border-color: #93c5fd;
+            cursor: not-allowed;
+            opacity: 0.7;
         }}
         .btn-secondary {{
-            background: transparent;
-            color: #94a3b8;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #ffffff;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+            height: 36px;
         }}
         .btn-secondary:hover {{
-            background: rgba(255, 255, 255, 0.05);
-            color: #f8fafc;
+            background: #f8fafc;
+            color: #0f172a;
+            border-color: #94a3b8;
         }}
         .ref-text {{
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 10px;
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 16px;
         }}
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="phone-pulse-container">
-            <div class="pulse-ring"></div>
-            <div class="phone-circle" id="iconCircle">
-                <svg viewBox="0 0 24 24">
-                    <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>
-                </svg>
-            </div>
+        <div class="spinner-container">
+            <div class="main-spinner" id="mainSpinner"></div>
         </div>
-        <h2>Authorize Payment</h2>
+        <h2>Authorize EcoCash Payment</h2>
         <div class="amount-tag">Amount: ${amount_str}</div>
         <p class="instructions">
             A payment prompt has been sent to your phone. Please check your EcoCash phone and <strong>enter your PIN</strong> to authorize the payment.
         </p>
 
         <div class="status-box" id="statusBox">
-            <div class="spinner" id="statusSpinner"></div>
+            <div class="status-spinner" id="statusSpinner"></div>
             <span id="statusText">Waiting for EcoCash confirmation...</span>
         </div>
 
@@ -427,10 +401,10 @@ class HavanoPaymentsController(http.Controller):
             const statusText = document.getElementById('statusText');
             const statusBox = document.getElementById('statusBox');
             const btnCheck = document.getElementById('btnCheck');
-            const iconCircle = document.getElementById('iconCircle');
+            const mainSpinner = document.getElementById('mainSpinner');
             const statusSpinner = document.getElementById('statusSpinner');
 
-            if (isManual) {{
+            if (isManual && btnCheck) {{
                 btnCheck.innerText = 'Verifying with Paynow...';
                 btnCheck.disabled = true;
             }}
@@ -440,21 +414,30 @@ class HavanoPaymentsController(http.Controller):
                 const result = await res.json();
 
                 if (result.paid) {{
-                    statusBox.style.background = 'rgba(16, 185, 129, 0.15)';
-                    statusBox.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-                    statusBox.style.color = '#34d399';
+                    statusBox.style.background = '#f0fdf4';
+                    statusBox.style.borderColor = '#bbf7d0';
+                    statusBox.style.color = '#16a34a';
                     if (statusSpinner) statusSpinner.style.display = 'none';
-                    if (iconCircle) iconCircle.style.background = 'linear-gradient(135deg, #059669, #10b981)';
-                    statusText.innerHTML = '<strong>Payment Confirmed!</strong> Redirecting to your subscription...';
+                    if (mainSpinner) {{
+                        mainSpinner.style.border = 'none';
+                        mainSpinner.style.animation = 'none';
+                        mainSpinner.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+                    }}
+                    statusText.innerHTML = '<strong>Payment Confirmed!</strong> Redirecting...';
                     setTimeout(() => {{
                         window.location.href = result.redirect_url || redirectUrl;
                     }}, 1000);
                     return;
                 }} else if (result.status === 'Cancelled' || result.status === 'Failed') {{
-                    statusBox.style.background = 'rgba(239, 68, 68, 0.15)';
-                    statusBox.style.borderColor = 'rgba(239, 68, 68, 0.3)';
-                    statusBox.style.color = '#f87171';
+                    statusBox.style.background = '#fef2f2';
+                    statusBox.style.borderColor = '#fecaca';
+                    statusBox.style.color = '#dc2626';
                     if (statusSpinner) statusSpinner.style.display = 'none';
+                    if (mainSpinner) {{
+                        mainSpinner.style.border = 'none';
+                        mainSpinner.style.animation = 'none';
+                        mainSpinner.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+                    }}
                     statusText.innerText = 'Payment was cancelled or failed.';
                     if (btnCheck) btnCheck.style.display = 'none';
                     return;
