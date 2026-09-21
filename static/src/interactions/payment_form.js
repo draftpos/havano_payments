@@ -49,8 +49,8 @@ patch(PaymentForm.prototype, {
             }));
             
             if (result.success) {
-                // Redirect to Odoo payment status page
-                window.location = '/payment/status';
+                // Redirect to EcoCash waiting and auto-polling page
+                window.location = '/payment/havano_payments/ecocash_waiting?reference=' + encodeURIComponent(processingValues.reference);
             } else {
                 this._displayErrorDialog("Payment Error", result.error || "Failed to initiate payment.");
                 this._enableButton();
