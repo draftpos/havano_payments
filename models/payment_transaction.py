@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 from odoo.addons.havano_payments.models.paynow_client import PaynowClient
 
@@ -83,3 +83,24 @@ class PaymentTransaction(models.Model):
             self._set_canceled()
         else:
             self._set_error(_("Paynow transaction failed with status: %s", payment_data.get('status')))
+
+    @api.model
+    def cron_poll_pending_paynow_transactions(self):
+        """ Poll pending Paynow/EcoCash transactions """
+        pending_txs = self.search([
+            ('provider_code', '=', 'havano_payments'),
+            ('state', '=', 'pending'),
+            ('paynow_poll_url', '!=', False)
+        ])
+        for tx in pending_txs:
+            try:
+                provider = tx.provider_id
+                if not provider or not provider.paynow_integration_id or not provider.paynow_integration_key:
+                    continue
+                client = PaynowClient(provider.paynow_integration_id, provider.paynow_integration_key)
+                poll_res = client.poll_transaction_status(tx.paynow_poll_url)
+                if not poll_res or not poll_res.get('success'):
+                    continue
+                tx._apply_updates(poll_res)
+            except Exception as e:
+                _logger.warning("Error polling Paynow transaction %s: %s", tx.reference, e)
